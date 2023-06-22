@@ -19,11 +19,15 @@ class configuration:
         self.__config_handle__ = self.get_config_handle()
 
         self.set_schema_version(self.__config_handle__)
-        self.set_schema_object(self.__config_handle__, self.__schema__.__schema_handle__)
+        try:
+            self.set_schema_object(self.__config_handle__, self.__schema__.__schema_handle__)
+        except Error() as e:
+            print(e.message)
 
-        encoded_file = "newRealm.realm".encode("utf-8")
+
+        encoded_file = "default.realm".encode("utf-8")
         self.set_path_for_realm(self.__config_handle__, encoded_file)
-        check_error()
+        
 
     def get_config_handle(self):
         rlm_lib.realm_config_new.restype = ctypes.c_void_p

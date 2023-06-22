@@ -37,6 +37,7 @@ def value_type(value):
 
 
 
+
 """
 RLMObjectModel
 ObjectModel - native python object inherit objectmodel and in doing so subclasses are found and attributes are taken
@@ -53,8 +54,6 @@ class ObjectModel:
 
     @staticmethod
     def __get_subclasses__():
-        # for attribute, default_value in cls.__dict__.items():
-        #     yield {"property": attribute, "property_value": default_value}
         return ObjectModel.__subclasses__()
 
     def __get_no_subclasses__():
@@ -63,84 +62,55 @@ class ObjectModel:
     @staticmethod
     def __get_subclass_attributes__():
         for subcls in ObjectModel.__get_subclasses__():
-            # attributes = []
-            # for attribute, default_value in subcls.__dict__.items():
-                
-            #     attributes.append({"property": attribute, "property_value": default_value})
-                
             yield (subcls.__name__, inspect.getargspec(subcls.__init__).args[1:], inspect.getargspec(subcls.__init__).defaults)
             
     @staticmethod
     def __get_rlm_schema_objects__():
         __schema_classes__ = []
         __schema_properties__ = []
-        Class_Info_Arr = (Class_Info * ObjectModel.__get_no_subclasses__())()
-        All_Property_Info_Arr = []
-        x = 0
-        for cls_name, cls_args, cls_defaults in ObjectModel.__get_subclass_attributes__():
-            
-            
-            map_args_defaults = {}
-            value_types = []
 
-            rlm_class = Class_Info(
+        Class_Info_Arr = (Class_Info * ObjectModel.__get_no_subclasses__())()
+        x = 0
+        max_no_properties = 0
+        for cls_name, cls_args, cls_defaults in ObjectModel.__get_subclass_attributes__():
+            Class_Info_Arr[x] = Class_Info(
                 f'{cls_name}'.encode('utf-8'), 
-                "".encode("utf-8"), 
+                ''.encode("utf-8"), 
                 ctypes.c_ulong(len(cls_args)), 
                 ctypes.c_ulong(0), 
                 ctypes.c_uint32(0), 
                 ctypes.c_int(0)
                 )
-            Class_Info_Arr[x] = rlm_class
-            rlm_class_properties = []
-
+            
+            if len(cls_args) > max_no_properties:
+                max_no_properties = len(cls_args)
+            
             if cls_defaults != None:
-                Property_Info_Arr = (Property_Info * 20)()
-                try:
-                    for d in cls_defaults:
-                        value_types.append(value_type(type(d)))
-                except:
-                    pass
-                if len(cls_args) == len(cls_defaults):
-                    i = 0
-                    while i < len(cls_args):
-                        map_args_defaults[f'{cls_args[i]}'] = value_types[i]
-                        i+=1
-                    
-                    j=0
-                    for prop in map_args_defaults:
-                        
-                        
-                        Property_Info_Arr[j] = Property_Info(
-                                    f"{prop}".encode("utf-8"),
-                                    f"_{prop}".encode("utf-8"),
-                                    ctypes.c_int(map_args_defaults[prop]),
+                sub_arr = (Property_Info * len(cls_args))
+                props_sub_arr = sub_arr()
+                for i in range(len(cls_args)):
+                    props_sub_arr[i] = Property_Info(
+                                    f"{cls_args[i]}".encode("utf-8"),
+                                    "".encode("utf-8"),
+                                    ctypes.c_int(value_type(type(cls_defaults[i]))),
                                     ctypes.c_int(0),
                                     "".encode("utf-8"),
                                     "".encode("utf-8"),
                                     ctypes.c_int64(0),
                                     ctypes.c_int(0),
                                 )
-                    
-                    # __schema_classes__.append(rlm_class)
-                    __schema_properties__.append(Property_Info_Arr)
-
-                else:
-                    raise AttributeError('Realm Error: Please ensure that all attributes have default values')
-              
+                __schema_properties__.append(ctypes.pointer(props_sub_arr))
+               
             else:
                 raise AttributeError('Realm Error: Please ensure all objects are defined properly')
-            
-            x += 1  
+            x += 1
 
-        return Class_Info_Arr, __schema_properties__
+        all_props_arr = (ctypes.POINTER(sub_arr) * len(__schema_properties__))()
+
+        cast_array = (Property_Info * max_no_properties)
+        for i in range(len(__schema_properties__)):
+            all_props_arr[i] = ctypes.cast(__schema_properties__[i], ctypes.POINTER(cast_array))
+        return Class_Info_Arr, all_props_arr
 
             
-            
-            # if cls_defaults != None:
-            #     i = 0
-            #     while i <= len(cls_args):
-            #         map_args_defaults[f'{cls_args[i]}'] = cls_defaults[i]
-            #         i+=1
-
-            # yield map_args_defaults
+        
