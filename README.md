@@ -6,6 +6,9 @@ This is a GitHub repository for the **Realm-Python-Library** project.
 
 The **Realm-Python-Library** is a Python library that provides an interface to interact with the Realm database. Realm is a mobile database that can be used for storing and managing data in mobile and web applications.
 
+Realm-Python-Library is only beginning and there is much functionality to add. This is a great place to start and I hope 
+to develop this library to do great things.
+
 ## Features
 
 - Allows you to create, update, and delete objects in the Realm database.
