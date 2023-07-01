@@ -1,5 +1,6 @@
 import ctypes
 
+
 class RealmValueTypeEnum(ctypes.c_int):
     RLM_TYPE_NULL = 0
     RLM_TYPE_INT = 1
@@ -104,7 +105,6 @@ def convert_pyobject_value_to_realm_object_value(value):
         new_string.data = f'{value}'.encode('utf-8')  # Use the appropriate string data
         new_string.size = len(new_string.data)
         new_value.values.string = new_string
-        print(new_value)
         return new_value
     elif type(value) == float:
         new_value = RealmValue()
@@ -120,8 +120,8 @@ def get_values_from_instance(py_object_instance, num_properties):
         """
         convert the value
         """
-        print(value)
         values_arr[i] = convert_pyobject_value_to_realm_object_value(value)
         i += 1
 
     return values_arr
+
