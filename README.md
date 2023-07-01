@@ -18,16 +18,14 @@ The **Realm-Python-Library** is a Python library that provides an interface to i
 The repository contains the following files and directories:
 
 - `README.md`: Provides an overview and documentation of the **Realm-Python-Library**.
-- `realm.py`: The main Python file that includes the implementation of the library.
-- `examples/`: A directory that contains example code snippets demonstrating the usage of the library.
-- `tests/`: A directory containing unit tests for validating the functionality of the library.
-- `LICENSE`: The license file for the **Realm-Python-Library**.
+- `src`: The main directory that contains the source code.
+- `test.py`: Test.py gives a very basic demonstration to Realm-Python-Library.
+
 
 ## Usage
 
-To use the **Realm-Python-Library** in your Python project, you can clone this repository and import the `realm.py` file into your codebase. Make sure to have the required dependencies installed as mentioned in the documentation.
+To use the **Realm-Python-Library** in your Python project, you can clone this repository and import the `realm.py` file into your codebase. 
 
-For more detailed information on how to use the library and its available methods, please refer to the `README.md` file in this repository.
 
 ## Contributions
 
