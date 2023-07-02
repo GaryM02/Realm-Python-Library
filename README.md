@@ -27,7 +27,9 @@ The repository contains the following files and directories:
 
 ## Usage
 
-To use the **Realm-Python-Library** in your Python project, you can clone this repository and import the `realm.py` file into your codebase. 
+To use the **Realm-Python-Library** in your Python project, you can clone this repository and import the * from RealmPython directory into your codebase. 
+
+The source code is still in it's beginnings and has not been published as a python package on any package managers.
 
 
 ## Contributions
