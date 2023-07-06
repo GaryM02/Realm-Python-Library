@@ -26,10 +26,15 @@ The repository contains the following files and directories:
 
 
 ## Usage
+-python version 3.10
 
 To use the **Realm-Python-Library** in your Python project, you can clone this repository and import the * from RealmPython directory into your codebase. 
 
 The source code is still in it's beginnings and has not been published as a python package on any package managers.
+
+### To use the tests provided in /tests 
+-cd into RealmPython/tests
+-python test.py
 
 
 ## Contributions
