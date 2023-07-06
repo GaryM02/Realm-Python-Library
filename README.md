@@ -33,9 +33,12 @@ To use the **Realm-Python-Library** in your Python project, you can clone this r
 The source code is still in it's beginnings and has not been published as a python package on any package managers.
 
 ### To use the tests provided in /tests 
--cd into RealmPython/tests
--python test.py
+```bash
 
+cd into RealmPython/tests
+
+python test.py
+```
 
 ## Contributions
 
