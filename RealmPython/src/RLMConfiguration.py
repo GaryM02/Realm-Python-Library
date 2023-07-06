@@ -2,10 +2,10 @@ import ctypes
 import RLMSchema
 import RLMError
 from realm_core import rlm_lib
-
+import inspect
 
 class configuration:
-    def __init__(self):
+    def __init__(self, file_name):
         self.__schema__ = RLMSchema.Schema()
         self.__config_handle__ = self.get_config_handle()
 
@@ -17,7 +17,7 @@ class configuration:
         except RLMError.Error() as e:
             print(e.message)
 
-        encoded_file = "default.realm".encode("utf-8")
+        encoded_file = f"{file_name}.realm".encode("utf-8")
         self.set_path_for_realm(self.__config_handle__, encoded_file)
 
     def get_config_handle(self):

@@ -50,6 +50,8 @@ while choice != 5:
         task_to_delete = input('Which task? ')
         realm.objects(ToDo).delete(f"task=='{task_to_delete}'")
 
+realm.delete_realm()
+
 executionTime = (time.time() - startTime)
 print('Execution time in seconds: ' + str(executionTime))
  

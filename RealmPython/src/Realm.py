@@ -7,7 +7,8 @@ from RLMObject import get_values_from_instance, get_values_from_kwargs
 import RLMQuery as RQ
 import json
 from RLMObject import RealmValue, RealmString, RealmValueTypeEnum
-
+import inspect
+import os
 
 class Error(ctypes.Structure):
     _fields_ = [
@@ -26,7 +27,10 @@ def check_error():
 
 class Realm:
     def __init__(self):
-        self.__rlm_configuration__ = RLMConfiguration.configuration()
+        caller_frame = inspect.stack()[1]
+        caller_filename_full = caller_frame.filename
+        caller_filename_only = os.path.splitext(os.path.basename(caller_filename_full))[0]
+        self.__rlm_configuration__ = RLMConfiguration.configuration(caller_filename_only)
 
         rlm_lib.realm_open.restype = ctypes.c_void_p
         self.realm_handle = rlm_lib.realm_open(
