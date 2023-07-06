@@ -20,9 +20,8 @@ class Error(ctypes.Structure):
 
 def check_error():
     err = Error()
-    rlm_lib.realm_get_last_error.argtypes = [ctypes.POINTER(Error)]
     rlm_lib.realm_get_last_error(ctypes.byref(err))
-    print(err.message)
+    print(str(err.message))
 
 
 class Realm:
@@ -33,6 +32,17 @@ class Realm:
         self.realm_handle = rlm_lib.realm_open(
             ctypes.c_void_p(self.__rlm_configuration__.__config_handle__)
         )
+        self.__path_to_realm__ = self.__get_path_for_realm__(
+            self.__rlm_configuration__.__config_handle__
+        )
+
+    def __get_path_for_realm__(self, config_handle):
+        rlm_lib.realm_config_get_path.restype = ctypes.c_char_p
+        res = rlm_lib.realm_config_get_path(ctypes.c_void_p(config_handle))
+        if res != None:
+            return res
+        else:
+            check_error()
 
     def __get_num_classes__(self):
         rlm_lib.realm_get_num_classes.restype = ctypes.c_size_t
@@ -294,7 +304,7 @@ class Realm:
                  -update property at <key> to new <RealmValue>
                 """
                 keys = rlm.__get_property_keys__(self.class_key)
-            
+
                 prop_keys = (ctypes.c_uint64 * len(kwargs))()
                 for idx, prop_name in enumerate(kwargs.keys()):
                     prop_keys[idx] = RQ.__realm_find_property__(
@@ -302,7 +312,6 @@ class Realm:
                     )
 
                 values = get_values_from_kwargs(kwargs, len(kwargs))
-
 
                 filtered_query_handle = RQ.__parse_query_for_results__(
                     self.results_handle, realm_query_string
@@ -312,7 +321,6 @@ class Realm:
                 )
                 object_handles = self.object_handles(new_results_handle)
                 for handle in object_handles:
-                    
                     is_default = False
                     rlm.__begin_write__()
                     rlm_lib.realm_set_values.restype = ctypes.c_bool
@@ -359,3 +367,26 @@ class Realm:
                     check_error()
 
         return Objects(py_object_model, rlm_handle)
+
+    def delete_realm(self):
+        """
+        This will delete all realm files associated with the realm instance
+        """
+        try:
+            rlm_lib.realm_close.restype = ctypes.c_bool
+            res = rlm_lib.realm_close(ctypes.c_void_p(self.realm_handle))
+            
+            if res == True:
+                out_deleted = ctypes.c_bool()
+                rlm_lib.realm_delete_files.restype = ctypes.c_bool
+                res = rlm_lib.realm_delete_files(
+                    ctypes.c_char_p(self.__path_to_realm__), ctypes.byref(out_deleted)
+                )
+                if res == True:
+                    return res
+                else:
+                    check_error()
+            else:
+                check_error()
+        except RuntimeError as e:
+            print(str(e.message))

@@ -3,14 +3,6 @@ import RLMObjectModel
 from realm_core import rlm_lib
 
 
-class Error(ctypes.Structure):
-    _fields_ = [
-        ("error", ctypes.c_int),
-        ("message", ctypes.c_char_p),
-        ("usercode_error", ctypes.c_char_p),
-        ("kind", ctypes.c_int),
-    ]
-
 
 class Schema:
     def __init__(self):
